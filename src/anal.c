@@ -427,6 +427,12 @@ R_API void r_serialize_anal_blocks_load(R_NONNULL Sdb *db, R_NONNULL RAnal *anal
 	key_parser_free (ctx.parser);
 }
 
+// R_API void r_serialize_anal_cpp_abi_save(R_NONNULL Sdb *db, R_NONNULL RAnal *anal) {
+// 
+// 	return;
+// }
+
+
 
 R_API void r_serialize_anal_save(R_NONNULL Sdb *db, R_NONNULL RAnal *anal) {
 	char *err;
@@ -438,6 +444,35 @@ R_API void r_serialize_anal_save(R_NONNULL Sdb *db, R_NONNULL RAnal *anal) {
 		return;
 	}
 	sdb_set (db, "anal/bits", buf, 0);
+
+	// Todo; linewidth
+
+	if (snprintf (buf, sizeof (buf), "0x%"PFMT32x, anal->big_endian) < 0) {
+		return;
+	}
+	sdb_set (db, "anal/big_endian", buf, R_SYS_ENDIAN);
+
+	// sleep
+
+	if (snprintf (buf, sizeof (buf), "0x%"PFMT32x, anal->cpp_abi) < 0) {
+		return;
+	}
+	sdb_set (db, "anal/cpp_abi", buf, 0);
+
+	if (snprintf (buf, sizeof (buf), "0x%"PFMT64x, anal->gp) < 0) {
+		return;
+	}
+	sdb_set (db, "anal/gp", buf, 0);
+
+	// bb_tree
+
+
+//	r_serialize_anal_cpp_abi_save (db, anal);
+// 
+// 	anal->op
+// 	RAnalOpCallback op;
+// 
+// 	anal->RAnalOp->RAnalHint(hint)
 }
 
 R_API void r_serialize_anal_load(R_NONNULL Sdb *db, R_NONNULL RAnal *anal) {
