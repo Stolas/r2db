@@ -429,9 +429,37 @@ R_API void r_serialize_anal_blocks_load(R_NONNULL Sdb *db, R_NONNULL RAnal *anal
 
 
 R_API void r_serialize_anal_save(R_NONNULL Sdb *db, R_NONNULL RAnal *anal) {
+	char *err;
+	sdb_set (db, "anal/cpu", anal->cpu, 0);
+	sdb_set (db, "anal/os", anal->os, 0);
 
+	char buf[0x20];
+	if (snprintf (buf, sizeof (buf), "0x%"PFMT64x, anal->bits) < 0) {
+		return;
+	}
+	sdb_set (db, "anal/bits", buf, 0);
 }
 
 R_API void r_serialize_anal_load(R_NONNULL Sdb *db, R_NONNULL RAnal *anal) {
+	const char *str = sdb_get (db, "anal/cpu", 0);
+	char *err;
+	if (!str || !*str) {
+		SERIALIZE_ERR ("missing cpu in anal");
+		return;
+	}
+	anal->cpu = strdup(str);
 
+	str = sdb_get (db, "anal/os", 0);
+	if (!str || !*str) {
+		SERIALIZE_ERR ("missing os in anal");
+		return;
+	}
+	anal->os = strdup(str);
+
+	str = sdb_get (db, "anal/bits", 0);
+	if (!str || !*str) {
+		SERIALIZE_ERR ("missing bits in anal");
+		return;
+	}
+	anal->bits = strtoull (str, NULL, 0);
 }
